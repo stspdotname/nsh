@@ -485,9 +485,8 @@ char *ether_str(struct sockaddr_dl *);
 /* ndp.c */
 int ndpset(int, char **, ...);
 void ndpget(const char *);
-int ndpdelete(const char *);
 struct sockaddr_in6;
-void ndpdump(struct sockaddr_in6 *, int);
+void ndpdump(struct sockaddr_in6 *, int, int);
 void conf_ndp(FILE *output, char *delim);
 
 /* nameserver.c */

@@ -1057,7 +1057,8 @@ Menu flushlist[] = {
 	    sizeof(struct ghs), 0, 1, flush_ip_routes },
 	{ "arp",	"ARP cache", CMPL(h) (char **)flushtab,
 	    sizeof(struct ghs), 0, 1, flush_arp_cache },
-	{ "ndp",	"NDP cache", CMPL0 0, 0, 0, 0, flush_ndp_cache },
+	{ "ndp",	"NDP cache", CMPL(h) (char **)flushtab,
+	    sizeof(struct ghs), 0, 1, flush_ndp_cache },
 	{ "line",	"Active user", CMPL0 0, 0, 1, 1, flush_line },
 	{ "bridge-dyn",	"Dynamically learned bridge addresses", CMPL0 0, 0, 1, 1, flush_bridgedyn },
 	{ "bridge-all",	"Dynamic and static bridge addresses", CMPL0 0, 0, 1, 1, flush_bridgeall },
@@ -3495,7 +3496,14 @@ flush_arp_cache(int argc, char **argv, ...)
 static int
 flush_ndp_cache(int argc, char **argv, ...)
 {
-	ndpdump(NULL, 1);
+	va_list ap;
+	char *verbose_arg;
+
+	va_start(ap, argv);
+	verbose_arg = va_arg(ap, char *);
+	va_end(ap);
+
+	ndpdump(NULL, 1, verbose_arg != NULL);
 	return(0);
 }
 
@@ -3716,7 +3724,7 @@ pr_ndp(int argc, char **argv, ...)
 	switch(argc) {
 	case 2:
 		/* show ndp table */
-		ndpdump(NULL, 0);
+		ndpdump(NULL, 0, 0);
 		break;
 	case 3:
 		/* specific address */

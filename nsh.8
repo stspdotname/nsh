@@ -3711,9 +3711,12 @@ If the
 flag is used then show which ARP entries were deleted.
 .Pp
 .Tg ndp
-.Ic flush ndp
+.Ic flush ndp Oo Ic verbose Oc
 .Pp
 Clear the system NDP cache and static NDP table.
+If the
+.Ic verbose
+flag is used then show which NDP entries were deleted.
 .Pp
 .Tg bridge
 .Ic flush bridge-dyn

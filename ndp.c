@@ -119,8 +119,7 @@ static int getsocket(void);
 int parse_host(const char *, struct sockaddr_in6 *);
 int ndpset(int, char **, ...);
 void ndpget(const char *);
-int ndpdelete(const char *);
-void ndpdump(struct sockaddr_in6 *, int);
+static int ndpdelete(const char *, int);
 static struct in6_nbrinfo *getnbrinfo(struct in6_addr *, int, int);
 int ndp_ether_aton(const char *, u_char *);
 int rtmsg_ndp(int);
@@ -208,7 +207,7 @@ ndpset(int argc, char *argv[], ...)
 	}
 
 	if (!set)
-		return ndpdelete(argv[1]);
+		return ndpdelete(argv[1], 1);
 
 	if (argc >= 3) {
 		host = argv[1];
@@ -289,7 +288,7 @@ ndpget(const char *host)
 		return;
 
 	found_entry = 0;
-	ndpdump(sin, 0);
+	ndpdump(sin, 0, 0);
 	if (found_entry == 0)
 		printf("%s -- no entry\n", host);
 }
@@ -297,8 +296,8 @@ ndpget(const char *host)
 /*
  * Delete a neighbor cache entry
  */
-int
-ndpdelete(const char *host)
+static int
+ndpdelete(const char *host, int flush_verbose)
 {
 	struct sockaddr_in6 *sin = &sin_m;
 	struct rt_msghdr *rtm = &m_rtmsg.m_rtm;
@@ -332,7 +331,7 @@ delete:
 		printf("%% cannot locate %s\n", host);
 		return (1);
 	}
-	if (rtmsg_ndp(RTM_DELETE) == 0)
+	if (rtmsg_ndp(RTM_DELETE) == 0 && flush_verbose)
 		printf("%% %s deleted\n", host);
 
 	return 0;
@@ -349,7 +348,7 @@ delete:
  * Dump the entire neighbor cache
  */
 void
-ndpdump(struct sockaddr_in6 *addr, int cflag)
+ndpdump(struct sockaddr_in6 *addr, int cflag, int flush_verbose)
 {
 	int mib[7];
 	size_t needed;
@@ -458,7 +457,7 @@ ndpdump(struct sockaddr_in6 *addr, int cflag)
 		    sizeof(host_buf), NULL, 0, NI_NUMERICHOST);
 		if (cflag) {
 			if (rtm->rtm_flags & RTF_CLONED)
-				ndpdelete(host_buf);
+				ndpdelete(host_buf, flush_verbose);
 			continue;
 		}
 		gettimeofday(&now, 0);
