@@ -748,7 +748,7 @@ conf_ndp(FILE *output, char *delim)
 	struct rt_msghdr *rtm;
 	struct rtdump *rtdump;
 
-	if ((rtdump = getrtdump(AF_INET6, RTF_LLINFO, 0)) == NULL)
+	if ((rtdump = getrtdump(AF_INET6, RTF_LLINFO, cli_rtable)) == NULL)
 	    return;
 
 	for (next = rtdump->buf; next < rtdump->lim; next += rtm->rtm_msglen) {
