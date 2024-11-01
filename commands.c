@@ -1558,7 +1558,7 @@ interface(int argc, char **argv, ...)
 			(*i->handler)(argc, argv, ifname, ifs);
 
 			if (save_cli_rtable != cli_rtable &&
-			    nsh_setrtable(cli_rtable) == 0)
+			    nsh_setrtable(save_cli_rtable) == 0)
 				cli_rtable = save_cli_rtable;
 		}
 
@@ -1640,7 +1640,7 @@ interface(int argc, char **argv, ...)
 			ret = (*i->handler)(margc, margv, ifname, ifs);
 
 			if (cli_rtable != save_cli_rtable &&
-			    nsh_setrtable(cli_rtable) == 0)
+			    nsh_setrtable(save_cli_rtable) == 0)
 				cli_rtable = save_cli_rtable;
 
 			if (ret)
@@ -2428,13 +2428,13 @@ docmd(int argc, char **argv, ...)
 				return 0;
 			}
 
-			if (cli_rtable != 0 && nsh_setrtable(cli_rtable) == 0)
+			if (cli_rtable != 0 && nsh_setrtable(0) == 0)
 				cli_rtable = 0;
 
 			(*i->handler)(argc, argv, ifname, ifs);
 
 			if (save_cli_rtable != cli_rtable &&
-			    nsh_setrtable(cli_rtable) == 0)
+			    nsh_setrtable(save_cli_rtable) == 0)
 				cli_rtable = save_cli_rtable;
 		}
 		close(ifs);
